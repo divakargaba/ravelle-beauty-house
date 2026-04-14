@@ -74,33 +74,52 @@ export default function About() {
       <section className="py-20 px-4">
         <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-12 items-center">
           <AnimatedSection direction="left">
-            <div className="aspect-[3/4] rounded-2xl border border-gold/20 bg-gradient-to-br from-gold/10 via-transparent to-rose/10 flex items-center justify-center relative overflow-hidden">
-              <div className="absolute inset-0 bg-gradient-to-t from-primary/80 to-transparent" />
-              <div className="relative text-center p-8">
-                <div className="w-24 h-24 rounded-full gold-gradient mx-auto mb-4 flex items-center justify-center">
-                  <span className="font-heading text-4xl text-primary">R</span>
-                </div>
-                <p className="text-gold/60 text-sm italic">Photo coming soon</p>
-              </div>
+            <div className="aspect-[3/4] rounded-2xl border border-gold/20 overflow-hidden relative">
+              <img
+                src="/rav-artist.jpg"
+                alt="Rav — Beauty Artist at Ravélle Beauty House"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-primary/60 via-transparent to-transparent" />
             </div>
           </AnimatedSection>
 
           <AnimatedSection direction="right" className="space-y-6">
             <h2 className="font-heading text-3xl md:text-4xl text-text-light">
-              Meet Your <span className="text-gold">Beauty Artist</span>
+              Meet <span className="text-gold">Rav</span>
             </h2>
             <div className="space-y-4 text-text-light/60 leading-relaxed">
               <p>
-                Welcome to Ravélle Beauty House — where beauty is not just a service, but an art form. Based in Calgary, AB, I bring the luxury salon experience directly to your doorstep, offering personalized beauty services in the comfort and privacy of your own home.
+                Hi, I'm Rav — a passionate beauty artist with over two decades of experience in the art of henna, and a lifelong love for the beauty industry.
               </p>
               <p>
-                With professional certifications in lash technology, henna artistry, waxing, and laser treatments, I've dedicated myself to mastering the art of beauty. Every service is performed with meticulous attention to detail, using only high-quality, professional-grade products.
+                My journey began early — I created my first bridal henna design at just 11 years old. What started as a natural talent quickly became a calling. Today, with 22 years of henna artistry and 7+ years of professional salon and spa management experience, I bring both creativity and professionalism into every appointment.
               </p>
               <p>
-                I believe that beauty is deeply personal. That's why I bring the luxury salon experience directly to you with my mobile service — creating a safe, comfortable space where you can relax, unwind, and let me transform your vision into reality. Henna services are open to everyone, while waxing is offered as a ladies-only service. Whether it's a stunning set of lashes, intricate bridal henna, or a flawless wax, I pour artistry and care into everything I do.
+                Beyond beauty, my background is deeply rooted in communication and connection. With an Associate Degree in Mass Media, along with experience as a radio jockey, TV analyst, and motivational speaker, I've learned how to truly understand people — not just serve them.
               </p>
-              <p className="text-gold italic font-heading text-lg">
-                "Every client is my canvas, and every service is my masterpiece."
+              <p>
+                At my core, I am an artist who genuinely loves this space. Salon and spa environments energize me. Helping people feel confident, valued, and beautiful is not just my work — it's something I deeply enjoy.
+              </p>
+              <p>
+                I also believe my biggest strength comes from being a client myself — a very particular one. I understand what it feels like to invest your time and money into beauty services, and expect real value in return. That's exactly what I aim to deliver:
+              </p>
+              <ul className="space-y-2 text-gold/80">
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-gold flex-shrink-0" />
+                  A personalized experience
+                </li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-gold flex-shrink-0" />
+                  Attention to detail
+                </li>
+                <li className="flex items-center gap-2">
+                  <Sparkles className="w-4 h-4 text-gold flex-shrink-0" />
+                  A space where you feel truly cared for
+                </li>
+              </ul>
+              <p className="text-gold italic font-heading text-lg pt-2">
+                "Whether it's henna, lashes, or brows — my goal is simple: to make sure you don't just love the results, but enjoy every moment of the experience."
               </p>
             </div>
           </AnimatedSection>

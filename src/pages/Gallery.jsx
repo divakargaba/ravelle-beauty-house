@@ -1,9 +1,92 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, ZoomIn } from 'lucide-react';
 import PageTransition from '../components/layout/PageTransition';
 import AnimatedSection from '../components/ui/AnimatedSection';
 import { galleryItems, galleryFilters } from '../data/gallery';
+
+function CircularWatermark({ className = '' }) {
+  const uid = useId().replace(/:/g, '');
+  const topId = `wm-t-${uid}`;
+  const bottomId = `wm-b-${uid}`;
+
+  return (
+    <svg
+      viewBox="0 0 300 300"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <defs>
+        {/* Clockwise full circle starting at 6 o'clock — 50% offset lands text at 12 o'clock */}
+        <path id={topId} d="M 150,251 A 101,101 0 1,1 150.01,251" />
+        {/* Counter-clockwise full circle starting at 12 o'clock — 50% offset lands text at 6 o'clock */}
+        <path id={bottomId} d="M 150,38 A 112,112 0 1,0 149.99,38" />
+      </defs>
+
+      {/* Outer double ring */}
+      <circle cx="150" cy="150" r="143" stroke="currentColor" strokeWidth="2" />
+      <circle cx="150" cy="150" r="137" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+
+      {/* Inner double ring */}
+      <circle cx="150" cy="150" r="80" stroke="currentColor" strokeWidth="1.5" />
+      <circle cx="150" cy="150" r="76" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+
+      {/* Top curved text: RAVÉLLE BEAUTY HOUSE */}
+      <text
+        fill="currentColor"
+        fontSize="18"
+        fontFamily="'Playfair Display', Georgia, serif"
+        fontWeight="600"
+        letterSpacing="4"
+      >
+        <textPath href={`#${topId}`} startOffset="50%" textAnchor="middle">
+          RAVÉLLE BEAUTY HOUSE
+        </textPath>
+      </text>
+
+      {/* Bottom curved text: WHERE BEAUTY BECOMES ART */}
+      <text
+        fill="currentColor"
+        fontSize="10.5"
+        fontFamily="'Inter', sans-serif"
+        fontWeight="400"
+        letterSpacing="2.5"
+      >
+        <textPath href={`#${bottomId}`} startOffset="50%" textAnchor="middle">
+          WHERE BEAUTY BECOMES ART
+        </textPath>
+      </text>
+
+      {/* Thin decorative ring around center R */}
+      <circle cx="150" cy="150" r="46" stroke="currentColor" strokeWidth="0.5" opacity="0.35" />
+
+      {/* Center R */}
+      <text
+        x="150"
+        y="153"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fill="currentColor"
+        fontSize="56"
+        fontFamily="'Playfair Display', Georgia, serif"
+        fontWeight="700"
+      >
+        R
+      </text>
+
+      {/* Diamond separators at 3 o'clock and 9 o'clock */}
+      <path d="M 258,145 L 263,150 L 258,155 L 253,150 Z" fill="currentColor" />
+      <path d="M 42,145 L 47,150 L 42,155 L 37,150 Z" fill="currentColor" />
+
+      {/* Small dot accents flanking each diamond */}
+      <circle cx="247" cy="150" r="1.5" fill="currentColor" />
+      <circle cx="269" cy="150" r="1.5" fill="currentColor" />
+      <circle cx="31" cy="150" r="1.5" fill="currentColor" />
+      <circle cx="53" cy="150" r="1.5" fill="currentColor" />
+    </svg>
+  );
+}
 
 function GalleryImage({ item, onClick }) {
   const [loaded, setLoaded] = useState(false);
@@ -38,19 +121,11 @@ function GalleryImage({ item, onClick }) {
         </div>
       </div>
 
-      {/* Watermark overlay */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-15">
-        <p
-          className="font-heading text-white whitespace-nowrap"
-          style={{
-            fontSize: '1rem',
-            transform: 'rotate(-30deg)',
-            letterSpacing: '0.1em',
-            textShadow: '0 1px 3px rgba(0,0,0,0.5)',
-          }}
-        >
-          Ravélle Beauty House
-        </p>
+      {/* Circular watermark overlay */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+        <CircularWatermark
+          className="w-[38%] h-auto text-white/[0.55] drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+        />
       </div>
     </motion.div>
   );
@@ -95,19 +170,11 @@ function Lightbox({ item, onClose }) {
             alt={item.title}
             className="max-h-[75vh] w-auto object-contain"
           />
-          {/* Watermark */}
-          <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden opacity-15">
-            <p
-              className="font-heading text-white whitespace-nowrap"
-              style={{
-                fontSize: '2rem',
-                transform: 'rotate(-30deg)',
-                letterSpacing: '0.1em',
-                textShadow: '0 2px 4px rgba(0,0,0,0.5)',
-              }}
-            >
-              Ravélle Beauty House
-            </p>
+          {/* Circular watermark overlay */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+            <CircularWatermark
+              className="w-[30%] h-auto text-white/[0.5] drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+            />
           </div>
         </div>
 
