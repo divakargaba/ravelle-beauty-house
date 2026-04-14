@@ -359,7 +359,7 @@ export default function Booking() {
                 </button>
 
                 <p className="text-text-light/30 text-xs text-center">
-                  By submitting, you agree to receive appointment confirmations via text. Ladies only service.
+                  By submitting, you agree to receive appointment confirmations via text.
                 </p>
               </form>
             </SpotlightCard>

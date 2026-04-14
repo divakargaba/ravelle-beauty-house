@@ -47,7 +47,7 @@ const trustBadges = [
   {
     icon: Heart,
     title: 'Welcoming to All',
-    description: 'Henna services open to everyone. Waxing available as a ladies-only service.',
+    description: 'All services are open and welcoming to everyone.',
   },
 ];
 

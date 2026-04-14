@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Phone, MapPin, Heart, ExternalLink } from 'lucide-react';
+import { Phone, MapPin, ExternalLink } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 const quickLinks = [
@@ -39,10 +39,6 @@ export default function Footer() {
               Mobile beauty services delivered to your door in Calgary, AB.
               Premium lashes, henna, waxing & more.
             </p>
-            <div className="flex items-center gap-2 text-rose text-sm font-medium">
-              <Heart className="w-4 h-4 fill-rose" />
-              Ladies Only Service
-            </div>
           </div>
 
           {/* Quick Links */}
