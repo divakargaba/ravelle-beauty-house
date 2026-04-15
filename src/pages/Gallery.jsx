@@ -25,19 +25,19 @@ function CircularWatermark({ className = '' }) {
       </defs>
 
       {/* Outer double ring */}
-      <circle cx="150" cy="150" r="143" stroke="currentColor" strokeWidth="2" />
-      <circle cx="150" cy="150" r="137" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+      <circle cx="150" cy="150" r="143" stroke="currentColor" strokeWidth="2.5" />
+      <circle cx="150" cy="150" r="137" stroke="currentColor" strokeWidth="0.75" opacity="0.6" />
 
       {/* Inner double ring */}
-      <circle cx="150" cy="150" r="80" stroke="currentColor" strokeWidth="1.5" />
-      <circle cx="150" cy="150" r="76" stroke="currentColor" strokeWidth="0.5" opacity="0.5" />
+      <circle cx="150" cy="150" r="80" stroke="currentColor" strokeWidth="2" />
+      <circle cx="150" cy="150" r="76" stroke="currentColor" strokeWidth="0.75" opacity="0.6" />
 
       {/* Top curved text: RAVÉLLE BEAUTY HOUSE */}
       <text
         fill="currentColor"
         fontSize="18"
         fontFamily="'Playfair Display', Georgia, serif"
-        fontWeight="600"
+        fontWeight="700"
         letterSpacing="4"
       >
         <textPath href={`#${topId}`} startOffset="50%" textAnchor="middle">
@@ -45,21 +45,46 @@ function CircularWatermark({ className = '' }) {
         </textPath>
       </text>
 
-      {/* Bottom curved text: WHERE BEAUTY BECOMES ART */}
+      {/* Bottom curved text: RAVÉLLE BEAUTY HOUSE (mirrored) */}
       <text
         fill="currentColor"
         fontSize="10.5"
-        fontFamily="'Inter', sans-serif"
-        fontWeight="400"
-        letterSpacing="2.5"
+        fontFamily="'Playfair Display', Georgia, serif"
+        fontWeight="600"
+        letterSpacing="3"
       >
         <textPath href={`#${bottomId}`} startOffset="50%" textAnchor="middle">
-          WHERE BEAUTY BECOMES ART
+          RAVÉLLE BEAUTY HOUSE
         </textPath>
       </text>
 
+      {/* Floral vine decorations in the bottom half between rings */}
+      {/* Left vine */}
+      <g stroke="currentColor" fill="currentColor" opacity="0.8">
+        {/* Left floral branch */}
+        <path d="M 80,210 Q 90,230 110,240" strokeWidth="1" fill="none" />
+        <ellipse cx="78" cy="207" rx="4" ry="6" transform="rotate(-30 78 207)" opacity="0.7" />
+        <ellipse cx="85" cy="215" rx="3" ry="5" transform="rotate(-15 85 215)" opacity="0.6" />
+        <ellipse cx="95" cy="228" rx="3.5" ry="5.5" transform="rotate(5 95 228)" opacity="0.7" />
+        <circle cx="110" cy="240" r="2" opacity="0.5" />
+
+        {/* Right floral branch (mirrored) */}
+        <path d="M 220,210 Q 210,230 190,240" strokeWidth="1" fill="none" />
+        <ellipse cx="222" cy="207" rx="4" ry="6" transform="rotate(30 222 207)" opacity="0.7" />
+        <ellipse cx="215" cy="215" rx="3" ry="5" transform="rotate(15 215 215)" opacity="0.6" />
+        <ellipse cx="205" cy="228" rx="3.5" ry="5.5" transform="rotate(-5 205 228)" opacity="0.7" />
+        <circle cx="190" cy="240" r="2" opacity="0.5" />
+
+        {/* Bottom center small flower */}
+        <circle cx="150" cy="255" r="2.5" opacity="0.6" />
+        <ellipse cx="145" cy="252" rx="3" ry="5" transform="rotate(-25 145 252)" opacity="0.5" />
+        <ellipse cx="155" cy="252" rx="3" ry="5" transform="rotate(25 155 252)" opacity="0.5" />
+        <ellipse cx="147" cy="258" rx="3" ry="5" transform="rotate(25 147 258)" opacity="0.5" />
+        <ellipse cx="153" cy="258" rx="3" ry="5" transform="rotate(-25 153 258)" opacity="0.5" />
+      </g>
+
       {/* Thin decorative ring around center R */}
-      <circle cx="150" cy="150" r="46" stroke="currentColor" strokeWidth="0.5" opacity="0.35" />
+      <circle cx="150" cy="150" r="46" stroke="currentColor" strokeWidth="0.75" opacity="0.5" />
 
       {/* Center R */}
       <text
@@ -124,7 +149,7 @@ function GalleryImage({ item, onClick }) {
       {/* Circular watermark overlay */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
         <CircularWatermark
-          className="w-[38%] h-auto text-white/[0.55] drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+          className="w-[38%] h-auto text-white/[0.7] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
         />
       </div>
     </motion.div>
@@ -173,7 +198,7 @@ function Lightbox({ item, onClose }) {
           {/* Circular watermark overlay */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
             <CircularWatermark
-              className="w-[30%] h-auto text-white/[0.5] drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]"
+              className="w-[30%] h-auto text-white/[0.65] drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
             />
           </div>
         </div>
