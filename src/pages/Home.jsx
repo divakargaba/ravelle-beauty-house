@@ -1,6 +1,6 @@
 import { Link } from 'react-router';
 import { motion } from 'framer-motion';
-import { ArrowRight, Sparkles, Eye, Flower2, Scissors, MapPin, Phone } from 'lucide-react';
+import { ArrowRight, Sparkles, Eye, Flower2, Scissors, Gem, MapPin, Phone } from 'lucide-react';
 import PageTransition from '../components/layout/PageTransition';
 import SparklesBackground from '../components/ui/SparklesBackground';
 import TextGenerate from '../components/ui/TextGenerate';
@@ -16,6 +16,7 @@ const iconMap = {
   Eye: Eye,
   Flower2: Flower2,
   Brush: Scissors,
+  Gem: Gem,
 };
 
 export default function Home() {
@@ -123,7 +124,7 @@ export default function Home() {
             </p>
           </AnimatedSection>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
             {serviceCategories.map((service, idx) => {
               const Icon = iconMap[service.icon] || Sparkles;
               return (

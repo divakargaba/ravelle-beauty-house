@@ -27,6 +27,13 @@ export const serviceCategories = [
     description: 'Perfectly shaped brows tailored to complement your unique features.',
     image: '/images/placeholder-eyebrows.jpg',
   },
+  {
+    id: 'browsLashes',
+    name: 'Brows & Lashes',
+    icon: 'Gem',
+    description: 'Brow lamination, lash lifts, and luxury combos for a polished, effortless look.',
+    image: '/images/placeholder-brows-lashes.jpg',
+  },
 ];
 
 export const waxingServices = {
@@ -112,6 +119,21 @@ export const eyebrowServices = {
   services: [],
 };
 
+export const browsLashesServices = {
+  brows: [
+    { name: 'Brow Lamination', price: 95 },
+    { name: 'Brow Lamination + Tint', price: 115 },
+    { name: 'Brow Lamination + Tint + Shaping', price: 130 },
+  ],
+  lashes: [
+    { name: 'Lash Lift', price: 90 },
+    { name: 'Lash Lift + Tint', price: 110 },
+  ],
+  combos: [
+    { name: 'Luxury Brow & Lash Combo', price: 220 },
+  ],
+};
+
 export const allServicesFlat = [
   // Waxing
   ...waxingServices.individual.map(s => ({ ...s, category: 'waxing' })),
@@ -127,4 +149,8 @@ export const allServicesFlat = [
   { name: 'Henna (Consultation Required)', category: 'henna' },
   // Eyebrows
   { name: 'Eyebrows (Consultation Required)', category: 'eyebrows' },
+  // Brows & Lashes
+  ...browsLashesServices.brows.map(s => ({ ...s, category: 'browsLashes' })),
+  ...browsLashesServices.lashes.map(s => ({ ...s, category: 'browsLashes' })),
+  ...browsLashesServices.combos.map(s => ({ ...s, category: 'browsLashes' })),
 ];

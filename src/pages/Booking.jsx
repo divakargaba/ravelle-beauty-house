@@ -23,6 +23,7 @@ const serviceOptions = {
   lashes: allServicesFlat.filter((s) => s.category === 'lashes'),
   henna: [{ name: 'Henna — Custom Design (Consultation)' }],
   eyebrows: [{ name: 'Eyebrow Service (Consultation)' }],
+  browsLashes: allServicesFlat.filter((s) => s.category === 'browsLashes'),
 };
 
 const timeSlots = [
@@ -186,8 +187,8 @@ export default function Booking() {
                 {/* Service Category */}
                 <div>
                   <label className="block text-text-light/60 text-sm mb-2">Service Category *</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                    {['waxing', 'lashes', 'henna', 'eyebrows'].map((cat) => (
+                  <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                    {['waxing', 'lashes', 'henna', 'eyebrows', 'browsLashes'].map((cat) => (
                       <button
                         key={cat}
                         type="button"
@@ -198,7 +199,7 @@ export default function Booking() {
                             : 'border border-gold/20 text-text-light/60 hover:border-gold/40'
                         }`}
                       >
-                        {cat}
+                        {cat === 'browsLashes' ? 'Brows & Lashes' : cat}
                       </button>
                     ))}
                   </div>

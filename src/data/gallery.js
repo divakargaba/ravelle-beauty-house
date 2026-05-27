@@ -143,6 +143,30 @@ export const galleryItems = [
     image: '/images/gallery/henna-18.jpg',
     aspectRatio: '3/4',
   },
+  {
+    id: 19,
+    category: 'lashes',
+    title: 'Brows & Lashes',
+    description: 'Brow lamination and lash lift results',
+    image: '/images/gallery/lashes-1.jpg',
+    aspectRatio: '3/4',
+  },
+  {
+    id: 20,
+    category: 'lashes',
+    title: 'Brows & Lashes',
+    description: 'Brow lamination and lash lift results',
+    image: '/images/gallery/lashes-2.jpg',
+    aspectRatio: '3/4',
+  },
+  {
+    id: 21,
+    category: 'lashes',
+    title: 'Brows & Lashes',
+    description: 'Brow lamination and lash lift results',
+    image: '/images/gallery/lashes-3.jpg',
+    aspectRatio: '3/4',
+  },
 ];
 
 export const galleryFilters = ['All', 'Henna', 'Lashes', 'Eyebrows', 'Waxing'];

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Eye, Flower2, Scissors, ArrowRight, Clock, Info } from 'lucide-react';
+import { Sparkles, Eye, Flower2, Scissors, Gem, ArrowRight, Clock, Info } from 'lucide-react';
 import PageTransition from '../components/layout/PageTransition';
 import AnimatedSection from '../components/ui/AnimatedSection';
 import SpotlightCard from '../components/ui/SpotlightCard';
@@ -10,6 +10,7 @@ import {
   lashServices,
   hennaServices,
   eyebrowServices,
+  browsLashesServices,
 } from '../data/services';
 
 const tabs = [
@@ -17,6 +18,7 @@ const tabs = [
   { id: 'lashes', label: 'Lashes', icon: Eye },
   { id: 'henna', label: 'Henna', icon: Flower2 },
   { id: 'eyebrows', label: 'Eyebrows', icon: Scissors },
+  { id: 'browsLashes', label: 'Brows & Lashes', icon: Gem },
 ];
 
 function PriceRow({ name, price, priceNote, duration, savings, description, note }) {
@@ -194,11 +196,46 @@ function EyebrowsTab() {
   );
 }
 
+function BrowsLashesTab() {
+  return (
+    <div className="space-y-8">
+      <div className="grid md:grid-cols-3 gap-6 mb-8">
+        {['/images/gallery/lashes-1.jpg', '/images/gallery/lashes-2.jpg', '/images/gallery/lashes-3.jpg'].map((src, i) => (
+          <div key={i} className="rounded-xl overflow-hidden border border-gold/10">
+            <img src={src} alt={`Brows & Lashes ${i + 1}`} className="w-full h-48 object-cover" />
+          </div>
+        ))}
+      </div>
+
+      <div className="grid md:grid-cols-2 gap-8">
+        <ServiceSection title="Brow Lamination">
+          {browsLashesServices.brows.map((s) => (
+            <PriceRow key={s.name} {...s} />
+          ))}
+        </ServiceSection>
+
+        <ServiceSection title="Lash Lift">
+          {browsLashesServices.lashes.map((s) => (
+            <PriceRow key={s.name} {...s} />
+          ))}
+        </ServiceSection>
+      </div>
+
+      <ServiceSection title="Luxury Combo">
+        {browsLashesServices.combos.map((s) => (
+          <PriceRow key={s.name} {...s} />
+        ))}
+      </ServiceSection>
+    </div>
+  );
+}
+
 const tabContent = {
   waxing: WaxingTab,
   lashes: LashesTab,
   henna: HennaTab,
   eyebrows: EyebrowsTab,
+  browsLashes: BrowsLashesTab,
 };
 
 export default function Services() {
