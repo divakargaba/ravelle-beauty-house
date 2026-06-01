@@ -78,6 +78,17 @@ exports.handler = async (event) => {
       resource: calendarEvent,
     });
 
+    // Format a readable date for notifications
+    const readableDate = new Date(date).toLocaleDateString('en-CA', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+    });
+
+    // Send email notification
+    await sendEmailNotification({ name, phone, email, service, category, date: readableDate, time, address, notes });
+
+    // Send SMS notification
+    await sendSmsNotification({ name, service, date: readableDate, time, phone });
+
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -91,6 +102,92 @@ exports.handler = async (event) => {
     };
   }
 };
+
+async function sendEmailNotification({ name, phone, email, service, category, date, time, address, notes }) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.log('RESEND_API_KEY not set, skipping email notification');
+    return;
+  }
+
+  const fromAddress = process.env.RESEND_FROM_EMAIL || 'Ravélle Beauty House <onboarding@resend.dev>';
+  const toAddress = 'ravellebeautyhouse@gmail.com';
+
+  try {
+    const res = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [toAddress],
+        subject: `New Booking Request — ${service} — ${name}`,
+        html: `
+          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #0A0A0A; color: #f5f5f5; padding: 32px; border-radius: 12px;">
+            <h1 style="color: #C9A96E; font-size: 24px; margin-bottom: 8px;">New Booking Request</h1>
+            <p style="color: #999; font-size: 14px; margin-bottom: 24px;">A new appointment has been submitted through the website.</p>
+            <table style="width: 100%; border-collapse: collapse;">
+              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E; width: 130px;">Client</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${name}</td></tr>
+              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Phone</td><td style="padding: 10px 0; border-bottom: 1px solid #222;"><a href="tel:${phone}" style="color: #f5f5f5;">${phone}</a></td></tr>
+              ${email ? `<tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Email</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${email}</td></tr>` : ''}
+              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Service</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${service} (${category})</td></tr>
+              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Date</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${date}</td></tr>
+              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Time</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${time}</td></tr>
+              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Address</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${address}</td></tr>
+              ${notes ? `<tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Notes</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${notes}</td></tr>` : ''}
+            </table>
+            <p style="color: #666; font-size: 12px; margin-top: 24px;">This booking has also been added to your Google Calendar.</p>
+          </div>
+        `,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('Resend email error:', err);
+    }
+  } catch (err) {
+    console.error('Email notification failed:', err);
+  }
+}
+
+async function sendSmsNotification({ name, service, date, time, phone }) {
+  const accountSid = process.env.TWILIO_ACCOUNT_SID;
+  const authToken = process.env.TWILIO_AUTH_TOKEN;
+  const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
+  const notifyPhone = process.env.NOTIFY_PHONE_NUMBER || '+17783444456';
+
+  if (!accountSid || !authToken || !twilioPhone) {
+    console.log('Twilio credentials not set, skipping SMS notification');
+    return;
+  }
+
+  const message = `📋 New Booking!\n${name} booked ${service}\n📅 ${date} at ${time}\n📞 ${phone}`;
+
+  try {
+    const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+      method: 'POST',
+      headers: {
+        Authorization: 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams({
+        To: notifyPhone,
+        From: twilioPhone,
+        Body: message,
+      }),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.error('Twilio SMS error:', err);
+    }
+  } catch (err) {
+    console.error('SMS notification failed:', err);
+  }
+}
 
 function convertTo24Hour(timeStr) {
   const [time, modifier] = timeStr.split(' ');
