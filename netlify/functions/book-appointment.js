@@ -154,35 +154,35 @@ async function sendEmailNotification({ name, phone, email, service, category, da
 }
 
 async function sendSmsNotification({ name, service, date, time, phone }) {
-  const accountSid = process.env.TWILIO_ACCOUNT_SID;
-  const authToken = process.env.TWILIO_AUTH_TOKEN;
-  const twilioPhone = process.env.TWILIO_PHONE_NUMBER;
-  const notifyPhone = process.env.NOTIFY_PHONE_NUMBER || '+17783444456';
-
-  if (!accountSid || !authToken || !twilioPhone) {
-    console.log('Twilio credentials not set, skipping SMS notification');
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey) {
+    console.log('RESEND_API_KEY not set, skipping SMS notification');
     return;
   }
 
-  const message = `📋 New Booking!\n${name} booked ${service}\n📅 ${date} at ${time}\n📞 ${phone}`;
+  // Bell/Virgin email-to-SMS gateway
+  const smsGateway = '7783444456@txt.bell.ca';
+  const fromAddress = process.env.RESEND_FROM_EMAIL || 'Ravélle Beauty House <onboarding@resend.dev>';
+  const message = `New Booking! ${name} booked ${service} on ${date} at ${time}. Client phone: ${phone}`;
 
   try {
-    const res = await fetch(`https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`, {
+    const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
-        Authorization: 'Basic ' + Buffer.from(`${accountSid}:${authToken}`).toString('base64'),
-        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${apiKey}`,
       },
-      body: new URLSearchParams({
-        To: notifyPhone,
-        From: twilioPhone,
-        Body: message,
+      body: JSON.stringify({
+        from: fromAddress,
+        to: [smsGateway],
+        subject: 'New Booking',
+        text: message,
       }),
     });
 
     if (!res.ok) {
       const err = await res.text();
-      console.error('Twilio SMS error:', err);
+      console.error('SMS gateway error:', err);
     }
   } catch (err) {
     console.error('SMS notification failed:', err);
