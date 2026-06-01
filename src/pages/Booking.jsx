@@ -93,7 +93,7 @@ export default function Booking() {
 
     setStatus('loading');
     try {
-      const response = await fetch('/.netlify/functions/book-appointment', {
+      const response = await fetch('/api/book-appointment', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
