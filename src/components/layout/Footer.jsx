@@ -1,5 +1,5 @@
 import { Link } from 'react-router';
-import { Phone, MapPin, ExternalLink } from 'lucide-react';
+import { Phone, Mail, MapPin, ExternalLink } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 
 const quickLinks = [
@@ -71,6 +71,18 @@ export default function Footer() {
                   <div>
                     <p className="text-sm font-medium">Text to Book</p>
                     <p className="text-gold text-lg font-heading">825-736-3649</p>
+                  </div>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="mailto:ravellebeautyhouse@gmail.com"
+                  className="flex items-center gap-3 text-text-light/60 hover:text-gold transition-colors"
+                >
+                  <Mail className="w-4 h-4 text-gold" />
+                  <div>
+                    <p className="text-sm font-medium">Email</p>
+                    <p className="text-gold text-sm">ravellebeautyhouse@gmail.com</p>
                   </div>
                 </a>
               </li>

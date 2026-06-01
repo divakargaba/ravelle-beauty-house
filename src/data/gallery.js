@@ -145,6 +145,22 @@ export const galleryItems = [
   },
   {
     id: 19,
+    category: 'henna',
+    title: 'Henna Design',
+    description: 'Beautiful henna artwork',
+    image: '/images/gallery/henna-19.jpg',
+    aspectRatio: '3/4',
+  },
+  {
+    id: 20,
+    category: 'henna',
+    title: 'Henna Design',
+    description: 'Beautiful henna artwork',
+    image: '/images/gallery/henna-20.jpg',
+    aspectRatio: '3/4',
+  },
+  {
+    id: 21,
     category: 'lashes',
     title: 'Brows & Lashes',
     description: 'Brow lamination and lash lift results',
@@ -152,7 +168,7 @@ export const galleryItems = [
     aspectRatio: '3/4',
   },
   {
-    id: 20,
+    id: 22,
     category: 'lashes',
     title: 'Brows & Lashes',
     description: 'Brow lamination and lash lift results',
@@ -160,7 +176,7 @@ export const galleryItems = [
     aspectRatio: '3/4',
   },
   {
-    id: 21,
+    id: 23,
     category: 'lashes',
     title: 'Brows & Lashes',
     description: 'Brow lamination and lash lift results',
