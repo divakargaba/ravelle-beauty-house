@@ -21,59 +21,53 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
-    // Parse date and time into start/end DateTime
-    const startDateTime = new Date(`${date}T${convertTo24Hour(time)}`);
-    const endDateTime = new Date(startDateTime.getTime() + 2 * 60 * 60 * 1000);
-
-    // Google Calendar API setup with service account
-    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
-    const calendarId = process.env.GOOGLE_CALENDAR_ID;
-
-    if (!credentials.client_email || !calendarId) {
-      console.error('Missing Google Calendar credentials or calendar ID');
-      return res.status(500).json({ error: 'Calendar service not configured' });
-    }
-
-    const auth = new google.auth.GoogleAuth({
-      credentials,
-      scopes: ['https://www.googleapis.com/auth/calendar.events'],
-    });
-
-    const calendar = google.calendar({ version: 'v3', auth });
-
-    const eventDescription = [
-      `Client: ${name}`,
-      `Phone: ${phone}`,
-      email ? `Email: ${email}` : null,
-      `Service: ${service} (${category})`,
-      `Address: ${address}`,
-      notes ? `Notes: ${notes}` : null,
-    ].filter(Boolean).join('\n');
-
-    const calendarEvent = {
-      summary: `Ravélle — ${service} — ${name}`,
-      description: eventDescription,
-      location: address,
-      start: {
-        dateTime: startDateTime.toISOString(),
-        timeZone: 'America/Edmonton',
-      },
-      end: {
-        dateTime: endDateTime.toISOString(),
-        timeZone: 'America/Edmonton',
-      },
-      colorId: '6',
-    };
-
-    await calendar.events.insert({
-      calendarId,
-      resource: calendarEvent,
-    });
-
     // Format a readable date for notifications
     const readableDate = new Date(date).toLocaleDateString('en-CA', {
       weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
     });
+
+    // Google Calendar (optional)
+    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
+    const calendarId = process.env.GOOGLE_CALENDAR_ID;
+
+    if (credentials.client_email && calendarId) {
+      try {
+        const startDateTime = new Date(`${date}T${convertTo24Hour(time)}`);
+        const endDateTime = new Date(startDateTime.getTime() + 2 * 60 * 60 * 1000);
+
+        const auth = new google.auth.GoogleAuth({
+          credentials,
+          scopes: ['https://www.googleapis.com/auth/calendar.events'],
+        });
+
+        const calendar = google.calendar({ version: 'v3', auth });
+
+        const eventDescription = [
+          `Client: ${name}`,
+          `Phone: ${phone}`,
+          email ? `Email: ${email}` : null,
+          `Service: ${service} (${category})`,
+          `Address: ${address}`,
+          notes ? `Notes: ${notes}` : null,
+        ].filter(Boolean).join('\n');
+
+        await calendar.events.insert({
+          calendarId,
+          resource: {
+            summary: `Ravélle — ${service} — ${name}`,
+            description: eventDescription,
+            location: address,
+            start: { dateTime: startDateTime.toISOString(), timeZone: 'America/Edmonton' },
+            end: { dateTime: endDateTime.toISOString(), timeZone: 'America/Edmonton' },
+            colorId: '6',
+          },
+        });
+      } catch (calErr) {
+        console.error('Google Calendar error (non-fatal):', calErr);
+      }
+    } else {
+      console.log('Google Calendar not configured, skipping calendar event');
+    }
 
     // Send email notification
     await sendEmailNotification({ name, phone, email, service, category, date: readableDate, time, address, notes });
