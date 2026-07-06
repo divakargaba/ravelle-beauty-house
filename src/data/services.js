@@ -17,7 +17,7 @@ export const serviceCategories = [
     id: 'henna',
     name: 'Henna',
     icon: 'Flower2',
-    description: 'Intricate henna artistry for every occasion, from bridal to casual.',
+    description: 'Luxury henna experiences for weddings, corporate events, festivals & private celebrations.',
     image: '/images/placeholder-henna.jpg',
   },
   {
@@ -110,7 +110,24 @@ export const lashServices = {
 };
 
 export const hennaServices = {
-  note: 'Pricing available upon consultation. Contact us for custom henna designs for weddings, parties, and special occasions.',
+  note: 'Luxury henna experiences for weddings, corporate events, festivals & private celebrations.',
+  eventServices: [
+    'Employee Appreciation Events',
+    'Diwali Celebrations',
+    'Eid Celebrations',
+    'South Asian Heritage Month',
+    'Women\'s Conferences',
+    'Trade Shows',
+    'University Events',
+    'Festivals',
+    'Private Corporate Functions',
+  ],
+  pricing: {
+    minimumHours: 2,
+    hourlyRate: 175,
+    travelNote: 'Travel fee applies outside Calgary',
+  },
+  bridalNote: 'Bridal henna pricing available upon consultation. Contact us for custom bridal designs.',
   services: [],
 };
 

@@ -21,7 +21,12 @@ import { allServicesFlat } from '../data/services';
 const serviceOptions = {
   waxing: allServicesFlat.filter((s) => s.category === 'waxing'),
   lashes: allServicesFlat.filter((s) => s.category === 'lashes'),
-  henna: [{ name: 'Henna — Custom Design (Consultation)' }],
+  henna: [
+    { name: 'Henna — Bridal (Consultation)' },
+    { name: 'Henna — Corporate / Event Booking ($175/hr, 2-hr min)' },
+    { name: 'Henna — Private Celebration' },
+    { name: 'Henna — Festival / Trade Show' },
+  ],
   eyebrows: [{ name: 'Eyebrow Service (Consultation)' }],
   browsLashes: allServicesFlat.filter((s) => s.category === 'browsLashes'),
 };
@@ -177,6 +182,23 @@ export default function Booking() {
           </div>
         </AnimatedSection>
       </section>
+
+      {/* Henna Feature Image */}
+      {form.category === 'henna' && (
+        <section className="px-4 pb-8">
+          <AnimatedSection delay={0.15}>
+            <div className="max-w-3xl mx-auto">
+              <div className="rounded-2xl overflow-hidden border border-gold/20">
+                <img
+                  src="/images/henna-length.jpg"
+                  alt="Henna artistry by Ravélle"
+                  className="w-full h-64 md:h-80 object-cover"
+                />
+              </div>
+            </div>
+          </AnimatedSection>
+        </section>
+      )}
 
       {/* Booking Form */}
       <section className="px-4 pb-24">

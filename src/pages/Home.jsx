@@ -120,7 +120,7 @@ export default function Home() {
               Artistry at Your <span className="gold-text-gradient">Doorstep</span>
             </h2>
             <p className="text-text-light/50 max-w-2xl mx-auto">
-              From stunning lash extensions to intricate henna art — we bring the luxury salon experience to the comfort of your home.
+              From stunning lash extensions to luxury henna experiences for weddings, corporate events, festivals & private celebrations — we bring the salon experience to you.
             </p>
           </AnimatedSection>
 
@@ -134,10 +134,10 @@ export default function Home() {
                       <div className="w-14 h-14 rounded-2xl gold-gradient flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
                         <Icon className="w-7 h-7 text-primary" />
                       </div>
-                      <h3 className="font-heading text-xl text-text-light mb-3 group-hover:text-gold transition-colors">
+                      <h3 className="font-heading text-2xl font-bold text-text-light mb-3 group-hover:text-gold transition-colors">
                         {service.name}
                       </h3>
-                      <p className="text-text-light/50 text-sm leading-relaxed">
+                      <p className="text-text-light/70 text-sm font-medium leading-relaxed">
                         {service.description}
                       </p>
                       <div className="mt-6 flex items-center gap-2 text-gold/60 text-sm group-hover:text-gold transition-colors">

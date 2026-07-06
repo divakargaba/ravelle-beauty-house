@@ -150,24 +150,71 @@ function LashesTab() {
 
 function HennaTab() {
   return (
-    <div className="max-w-2xl mx-auto text-center py-12">
-      <div className="w-20 h-20 rounded-full border-2 border-gold/30 flex items-center justify-center mx-auto mb-6">
-        <Flower2 className="w-9 h-9 text-gold" />
+    <div className="py-8">
+      <div className="text-center mb-12">
+        <div className="w-20 h-20 rounded-full border-2 border-gold/30 flex items-center justify-center mx-auto mb-6">
+          <Flower2 className="w-9 h-9 text-gold" />
+        </div>
+        <h3 className="font-heading text-3xl text-text-light mb-4">Luxury Henna Experiences</h3>
+        <p className="text-text-light/60 leading-relaxed max-w-2xl mx-auto">
+          {hennaServices.note}
+        </p>
       </div>
-      <h3 className="font-heading text-2xl text-text-light mb-4">Henna Artistry</h3>
-      <p className="text-text-light/60 leading-relaxed mb-8">
-        {hennaServices.note}
-      </p>
-      <p className="text-text-light/40 text-sm mb-8">
-        Perfect for weddings, engagements, Eid celebrations, baby showers, and special occasions. Custom designs created with natural, high-quality henna.
-      </p>
-      <Link
-        to="/book"
-        className="inline-flex items-center gap-2 rounded-full border border-gold/30 px-8 py-3 text-gold hover:bg-gold hover:text-primary transition-all duration-300"
-      >
-        Request a Consultation
-        <ArrowRight className="w-4 h-4" />
-      </Link>
+
+      <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        {/* Event Services */}
+        <div>
+          <ServiceSection title="Events & Occasions">
+            <div className="space-y-3">
+              {hennaServices.eventServices.map((service) => (
+                <div key={service} className="flex items-center gap-3 py-2 px-4 -mx-4 rounded-lg hover:bg-gold/[0.03] transition-colors">
+                  <span className="w-1.5 h-1.5 rounded-full bg-gold/50" />
+                  <p className="text-text-light/80 text-sm">{service}</p>
+                </div>
+              ))}
+            </div>
+          </ServiceSection>
+        </div>
+
+        {/* Pricing */}
+        <div>
+          <ServiceSection title="Pricing">
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-3 border-b border-gold/10 px-4 -mx-4">
+                <p className="text-text-light/90 font-medium text-sm">Hourly Rate</p>
+                <span className="text-gold font-heading text-xl">${hennaServices.pricing.hourlyRate}/hr</span>
+              </div>
+              <div className="flex items-center justify-between py-3 border-b border-gold/10 px-4 -mx-4">
+                <p className="text-text-light/90 font-medium text-sm">Minimum Booking</p>
+                <span className="text-gold font-heading text-lg">{hennaServices.pricing.minimumHours}-hour minimum</span>
+              </div>
+              <div className="mt-4 p-4 bg-gold/5 border border-gold/10 rounded-xl">
+                <p className="text-text-light/50 text-sm">
+                  <Info className="w-4 h-4 inline mr-1 text-gold" />
+                  {hennaServices.pricing.travelNote}
+                </p>
+              </div>
+            </div>
+          </ServiceSection>
+
+          <div className="mt-8 p-6 bg-gold/5 border border-gold/10 rounded-xl">
+            <h4 className="font-heading text-lg text-gold mb-2">Bridal Henna</h4>
+            <p className="text-text-light/50 text-sm leading-relaxed">
+              {hennaServices.bridalNote}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="text-center mt-12">
+        <Link
+          to="/book"
+          className="inline-flex items-center gap-2 rounded-full border border-gold/30 px-8 py-3 text-gold hover:bg-gold hover:text-primary transition-all duration-300"
+        >
+          Request a Consultation
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
     </div>
   );
 }
