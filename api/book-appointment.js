@@ -69,11 +69,8 @@ export default async function handler(req, res) {
       console.log('Google Calendar not configured, skipping calendar event');
     }
 
-    // Send email notification
-    await sendEmailNotification({ name, phone, email, service, category, date: readableDate, time, address, notes });
-
-    // Send SMS notification via email-to-SMS gateway
-    await sendSmsNotification({ name, service, date: readableDate, time, phone });
+    // Send push notification via ntfy.sh
+    await sendPushNotification({ name, phone, email, service, category, date: readableDate, time, address, notes });
 
     return res.status(200).json({ success: true, message: 'Appointment booked successfully' });
   } catch (error) {
@@ -82,88 +79,37 @@ export default async function handler(req, res) {
   }
 }
 
-async function sendEmailNotification({ name, phone, email, service, category, date, time, address, notes }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.log('RESEND_API_KEY not set, skipping email notification');
-    return;
-  }
-
-  const fromAddress = process.env.RESEND_FROM_EMAIL || 'Ravélle Beauty House <onboarding@resend.dev>';
-  const toAddress = 'ravellebeautyhouse@gmail.com';
+async function sendPushNotification({ name, phone, email, service, category, date, time, address, notes }) {
+  const topic = 'ravelle-book-7783444456';
+  const title = `New Booking — ${service}`;
+  const body = [
+    `Client: ${name}`,
+    `Phone: ${phone}`,
+    email ? `Email: ${email}` : null,
+    `Service: ${service} (${category})`,
+    `Date: ${date}`,
+    `Time: ${time}`,
+    `Address: ${address}`,
+    notes ? `Notes: ${notes}` : null,
+  ].filter(Boolean).join('\n');
 
   try {
-    const r = await fetch('https://api.resend.com/emails', {
+    const r = await fetch(`https://ntfy.sh/${topic}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
+        'Title': title,
+        'Priority': '4',
+        'Tags': 'sparkles,calendar',
       },
-      body: JSON.stringify({
-        from: fromAddress,
-        to: [toAddress],
-        subject: `New Booking Request — ${service} — ${name}`,
-        html: `
-          <div style="font-family: Georgia, serif; max-width: 600px; margin: 0 auto; background: #0A0A0A; color: #f5f5f5; padding: 32px; border-radius: 12px;">
-            <h1 style="color: #C9A96E; font-size: 24px; margin-bottom: 8px;">New Booking Request</h1>
-            <p style="color: #999; font-size: 14px; margin-bottom: 24px;">A new appointment has been submitted through the website.</p>
-            <table style="width: 100%; border-collapse: collapse;">
-              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E; width: 130px;">Client</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${name}</td></tr>
-              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Phone</td><td style="padding: 10px 0; border-bottom: 1px solid #222;"><a href="tel:${phone}" style="color: #f5f5f5;">${phone}</a></td></tr>
-              ${email ? `<tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Email</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${email}</td></tr>` : ''}
-              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Service</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${service} (${category})</td></tr>
-              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Date</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${date}</td></tr>
-              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Time</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${time}</td></tr>
-              <tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Address</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${address}</td></tr>
-              ${notes ? `<tr><td style="padding: 10px 0; border-bottom: 1px solid #222; color: #C9A96E;">Notes</td><td style="padding: 10px 0; border-bottom: 1px solid #222;">${notes}</td></tr>` : ''}
-            </table>
-            <p style="color: #666; font-size: 12px; margin-top: 24px;">This booking has also been added to your Google Calendar.</p>
-          </div>
-        `,
-      }),
+      body,
     });
 
     if (!r.ok) {
       const err = await r.text();
-      console.error('Resend email error:', err);
+      console.error('ntfy.sh notification error:', err);
     }
   } catch (err) {
-    console.error('Email notification failed:', err);
-  }
-}
-
-async function sendSmsNotification({ name, service, date, time, phone }) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) {
-    console.log('RESEND_API_KEY not set, skipping SMS notification');
-    return;
-  }
-
-  const smsGateway = '7783444456@txt.bell.ca';
-  const fromAddress = process.env.RESEND_FROM_EMAIL || 'Ravélle Beauty House <onboarding@resend.dev>';
-  const message = `New Booking! ${name} booked ${service} on ${date} at ${time}. Client phone: ${phone}`;
-
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        from: fromAddress,
-        to: [smsGateway],
-        subject: 'New Booking',
-        text: message,
-      }),
-    });
-
-    if (!r.ok) {
-      const err = await r.text();
-      console.error('SMS gateway error:', err);
-    }
-  } catch (err) {
-    console.error('SMS notification failed:', err);
+    console.error('Push notification failed:', err);
   }
 }
 
