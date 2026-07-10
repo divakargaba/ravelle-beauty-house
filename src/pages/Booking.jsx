@@ -192,7 +192,7 @@ export default function Booking() {
                 <img
                   src="/images/henna-length.jpg"
                   alt="Henna artistry by Ravélle"
-                  className="w-full h-64 md:h-80 object-cover"
+                  className="w-full object-contain"
                 />
               </div>
             </div>
