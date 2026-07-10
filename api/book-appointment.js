@@ -27,8 +27,14 @@ export default async function handler(req, res) {
     });
 
     // Google Calendar (optional)
-    const credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
+    let credentials = {};
     const calendarId = process.env.GOOGLE_CALENDAR_ID;
+
+    try {
+      credentials = JSON.parse(process.env.GOOGLE_SERVICE_ACCOUNT_KEY || '{}');
+    } catch {
+      console.error('Failed to parse GOOGLE_SERVICE_ACCOUNT_KEY, skipping calendar');
+    }
 
     if (credentials.client_email && calendarId) {
       try {
