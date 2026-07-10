@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { Lock, ChevronLeft, ChevronRight, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Lock, ChevronLeft, ChevronRight, Loader2, X } from 'lucide-react';
 import PageTransition from '../components/layout/PageTransition';
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -9,11 +9,20 @@ const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
+const TIME_SLOTS = [
+  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
+  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM',
+  '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
+  '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM',
+  '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM',
+  '7:00 PM',
+];
+
 function toDateString(year, month, day) {
   return `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
 }
 
-function AdminCalendar({ year, month, blockedDates, onToggle, loading }) {
+function AdminCalendar({ year, month, blockedDates, blockedTimes, onDateClick, selectedDate, loading }) {
   const calendarDays = useMemo(() => {
     const firstDay = new Date(year, month, 1).getDay();
     const daysInMonth = new Date(year, month + 1, 0).getDate();
@@ -45,7 +54,9 @@ function AdminCalendar({ year, month, blockedDates, onToggle, loading }) {
           const date = new Date(year, month, day);
           const isPast = date < new Date(today.getFullYear(), today.getMonth(), today.getDate());
           const isSunday = date.getDay() === 0;
-          const isBlocked = blockedDates.includes(dateStr);
+          const isFullyBlocked = blockedDates.includes(dateStr);
+          const hasBlockedTimes = blockedTimes[dateStr] && blockedTimes[dateStr].length > 0;
+          const isSelected = selectedDate === dateStr;
 
           if (isPast) {
             return (
@@ -59,20 +70,24 @@ function AdminCalendar({ year, month, blockedDates, onToggle, loading }) {
             <button
               key={day}
               type="button"
-              disabled={loading === dateStr}
-              onClick={() => onToggle(dateStr, isBlocked)}
+              disabled={isSunday}
+              onClick={() => !isSunday && onDateClick(dateStr)}
               className={`
                 aspect-square flex items-center justify-center rounded-lg text-sm transition-all relative
-                ${loading === dateStr ? 'opacity-50' : ''}
                 ${isSunday
                   ? 'text-text-light/20 cursor-default'
-                  : isBlocked
-                    ? 'bg-red-500/20 text-red-400 line-through border border-red-500/30 hover:bg-red-500/30'
-                    : 'bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20'
+                  : isSelected
+                    ? 'bg-gold text-primary font-semibold ring-2 ring-gold/50'
+                    : isFullyBlocked
+                      ? 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30'
+                      : 'bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20'
                 }
               `}
             >
               {day}
+              {hasBlockedTimes && !isFullyBlocked && (
+                <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-red-400" />
+              )}
             </button>
           );
         })}
@@ -87,7 +102,9 @@ export default function Admin() {
   const [authError, setAuthError] = useState('');
   const [authLoading, setAuthLoading] = useState(false);
   const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedTimes, setBlockedTimes] = useState({});
   const [toggleLoading, setToggleLoading] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
 
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
@@ -101,7 +118,10 @@ export default function Admin() {
     if (authenticated) {
       fetch('/api/availability')
         .then((res) => res.json())
-        .then((data) => setBlockedDates(data.blockedDates || []))
+        .then((data) => {
+          setBlockedDates(data.blockedDates || []);
+          setBlockedTimes(data.blockedTimes || {});
+        })
         .catch(() => {});
     }
   }, [authenticated]);
@@ -131,8 +151,13 @@ export default function Admin() {
     }
   };
 
-  const handleToggle = async (dateStr, currentlyBlocked) => {
-    setToggleLoading(dateStr);
+  const handleDateClick = (dateStr) => {
+    setSelectedDate(selectedDate === dateStr ? null : dateStr);
+  };
+
+  const handleToggleDay = async (dateStr) => {
+    const isBlocked = blockedDates.includes(dateStr);
+    setToggleLoading('day');
     try {
       const res = await fetch('/api/availability', {
         method: 'POST',
@@ -140,16 +165,45 @@ export default function Admin() {
         body: JSON.stringify({
           password,
           date: dateStr,
-          action: currentlyBlocked ? 'unblock' : 'block',
+          action: isBlocked ? 'unblock' : 'block',
         }),
       });
 
       if (res.ok) {
         const data = await res.json();
         setBlockedDates(data.blockedDates || []);
+        setBlockedTimes(data.blockedTimes || {});
       }
     } catch {
-      // Silently fail — state stays unchanged
+      // Silently fail
+    } finally {
+      setToggleLoading(null);
+    }
+  };
+
+  const handleToggleTime = async (dateStr, time) => {
+    const slotsForDate = blockedTimes[dateStr] || [];
+    const isBlocked = slotsForDate.includes(time);
+    setToggleLoading(time);
+    try {
+      const res = await fetch('/api/availability', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          password,
+          date: dateStr,
+          time,
+          action: isBlocked ? 'unblock' : 'block',
+        }),
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setBlockedDates(data.blockedDates || []);
+        setBlockedTimes(data.blockedTimes || {});
+      }
+    } catch {
+      // Silently fail
     } finally {
       setToggleLoading(null);
     }
@@ -208,6 +262,9 @@ export default function Admin() {
     );
   }
 
+  const isSelectedFullyBlocked = selectedDate && blockedDates.includes(selectedDate);
+  const selectedDateBlockedTimes = selectedDate ? (blockedTimes[selectedDate] || []) : [];
+
   return (
     <PageTransition>
       <section className="pt-32 pb-24 px-4">
@@ -217,7 +274,7 @@ export default function Admin() {
               Manage <span className="gold-text-gradient">Availability</span>
             </h1>
             <p className="text-text-light/40 text-sm">
-              Click any date to block or unblock it. Sundays are always off. Blocked dates appear in red.
+              Click any date to manage its time slots. Sundays are always off.
             </p>
           </div>
 
@@ -231,6 +288,9 @@ export default function Admin() {
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-3 h-3 rounded bg-primary/50" /> Sunday / Past
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400" /> Partial
             </span>
           </div>
 
@@ -262,17 +322,99 @@ export default function Admin() {
               year={viewYear}
               month={viewMonth}
               blockedDates={blockedDates}
-              onToggle={handleToggle}
+              blockedTimes={blockedTimes}
+              onDateClick={handleDateClick}
+              selectedDate={selectedDate}
               loading={toggleLoading}
             />
             <AdminCalendar
               year={nextYearVal}
               month={nextMonthVal}
               blockedDates={blockedDates}
-              onToggle={handleToggle}
+              blockedTimes={blockedTimes}
+              onDateClick={handleDateClick}
+              selectedDate={selectedDate}
               loading={toggleLoading}
             />
           </div>
+
+          {/* Time Slot Management Panel */}
+          <AnimatePresence>
+            {selectedDate && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="overflow-hidden"
+              >
+                <div className="mt-6 bg-primary/50 border border-gold/20 rounded-xl p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="font-heading text-text-light text-lg">
+                      Time Slots for <span className="text-gold">{selectedDate}</span>
+                    </h3>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedDate(null)}
+                      className="p-1.5 rounded-lg hover:bg-gold/10 text-text-light/40 hover:text-gold transition-colors"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Block/Unblock Entire Day Button */}
+                  <div className="mb-4">
+                    <button
+                      type="button"
+                      disabled={toggleLoading === 'day'}
+                      onClick={() => handleToggleDay(selectedDate)}
+                      className={`
+                        px-4 py-2 rounded-lg text-sm font-medium transition-all flex items-center gap-2
+                        ${isSelectedFullyBlocked
+                          ? 'bg-gold/10 border border-gold/30 text-gold hover:bg-gold/20'
+                          : 'bg-red-500/10 border border-red-500/30 text-red-400 hover:bg-red-500/20'
+                        }
+                        ${toggleLoading === 'day' ? 'opacity-50' : ''}
+                      `}
+                    >
+                      {toggleLoading === 'day' && <Loader2 className="w-3 h-3 animate-spin" />}
+                      {isSelectedFullyBlocked ? 'Unblock Entire Day' : 'Block Entire Day'}
+                    </button>
+                  </div>
+
+                  {isSelectedFullyBlocked ? (
+                    <p className="text-red-400/60 text-sm">
+                      This entire day is blocked. Unblock it to manage individual time slots.
+                    </p>
+                  ) : (
+                    <div className="flex flex-wrap gap-2">
+                      {TIME_SLOTS.map((slot) => {
+                        const isBlocked = selectedDateBlockedTimes.includes(slot);
+                        const isLoading = toggleLoading === slot;
+                        return (
+                          <button
+                            key={slot}
+                            type="button"
+                            disabled={isLoading}
+                            onClick={() => handleToggleTime(selectedDate, slot)}
+                            className={`
+                              px-3 py-2 rounded-lg text-sm transition-all
+                              ${isLoading ? 'opacity-50' : ''}
+                              ${isBlocked
+                                ? 'bg-red-500/20 text-red-400 border border-red-500/30 hover:bg-red-500/30'
+                                : 'bg-gold/10 text-gold border border-gold/20 hover:bg-gold/20'
+                              }
+                            `}
+                          >
+                            {slot}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
       </section>
     </PageTransition>

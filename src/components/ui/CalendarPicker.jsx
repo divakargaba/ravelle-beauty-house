@@ -36,7 +36,7 @@ function isDateDisabled(year, month, day, blockedDates) {
   return false;
 }
 
-export default function CalendarPicker({ selectedDate, selectedTime, onDateChange, onTimeChange, blockedDates = [], dateError, timeError }) {
+export default function CalendarPicker({ selectedDate, selectedTime, onDateChange, onTimeChange, blockedDates = [], blockedTimes = {}, dateError, timeError }) {
   const today = new Date();
   const [viewMonth, setViewMonth] = useState(today.getMonth());
   const [viewYear, setViewYear] = useState(today.getFullYear());
@@ -171,22 +171,28 @@ export default function CalendarPicker({ selectedDate, selectedTime, onDateChang
           >
             <label className="block text-text-light/60 text-sm mb-2">Preferred Time *</label>
             <div className="flex flex-wrap gap-2">
-              {TIME_SLOTS.map((slot) => (
-                <button
-                  key={slot}
-                  type="button"
-                  onClick={() => onTimeChange(slot)}
-                  className={`
-                    px-3 py-2 rounded-lg text-sm transition-all
-                    ${selectedTime === slot
-                      ? 'bg-gold text-primary font-semibold'
-                      : 'border border-gold/20 text-text-light/60 hover:border-gold/40 hover:text-gold'
-                    }
-                  `}
-                >
-                  {slot}
-                </button>
-              ))}
+              {TIME_SLOTS.map((slot) => {
+                const isTimeBlocked = (blockedTimes[selectedDate] || []).includes(slot);
+                return (
+                  <button
+                    key={slot}
+                    type="button"
+                    disabled={isTimeBlocked}
+                    onClick={() => onTimeChange(slot)}
+                    className={`
+                      px-3 py-2 rounded-lg text-sm transition-all
+                      ${isTimeBlocked
+                        ? 'text-text-light/15 cursor-not-allowed border border-text-light/10'
+                        : selectedTime === slot
+                          ? 'bg-gold text-primary font-semibold'
+                          : 'border border-gold/20 text-text-light/60 hover:border-gold/40 hover:text-gold'
+                      }
+                    `}
+                  >
+                    {slot}
+                  </button>
+                );
+              })}
             </div>
             {timeError && <p className="text-red-400 text-xs mt-1">{timeError}</p>}
           </motion.div>

@@ -62,11 +62,15 @@ export default function Booking() {
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
   const [blockedDates, setBlockedDates] = useState([]);
+  const [blockedTimes, setBlockedTimes] = useState({});
 
   useEffect(() => {
     fetch('/api/availability')
       .then((res) => res.json())
-      .then((data) => setBlockedDates(data.blockedDates || []))
+      .then((data) => {
+        setBlockedDates(data.blockedDates || []);
+        setBlockedTimes(data.blockedTimes || {});
+      })
       .catch(() => {});
   }, []);
 
@@ -260,6 +264,7 @@ export default function Booking() {
                   onDateChange={(date) => update('date', date)}
                   onTimeChange={(time) => update('time', time)}
                   blockedDates={blockedDates}
+                  blockedTimes={blockedTimes}
                   dateError={errors.date}
                   timeError={errors.time}
                 />
