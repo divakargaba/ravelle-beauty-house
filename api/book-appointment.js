@@ -76,9 +76,16 @@ export default async function handler(req, res) {
     }
 
     // Send push notification via ntfy.sh
-    await sendPushNotification({ name, phone, email, service, category, date: readableDate, time, address, notes });
+    let ntfyStatus = 'unknown';
+    try {
+      await sendPushNotification({ name, phone, email, service, category, date: readableDate, time, address, notes });
+      ntfyStatus = 'sent';
+    } catch (ntfyErr) {
+      console.error('ntfy error:', ntfyErr);
+      ntfyStatus = `failed: ${ntfyErr.message}`;
+    }
 
-    return res.status(200).json({ success: true, message: 'Appointment booked successfully' });
+    return res.status(200).json({ success: true, message: 'Appointment booked successfully', ntfyStatus });
   } catch (error) {
     console.error('Booking error:', error);
     return res.status(500).json({ error: 'Failed to create appointment' });
@@ -87,7 +94,7 @@ export default async function handler(req, res) {
 
 async function sendPushNotification({ name, phone, email, service, category, date, time, address, notes }) {
   const topic = 'ravelle-book-7783444456';
-  const title = `New Booking — ${service}`;
+  const title = `New Booking - ${service}`;
   const body = [
     `Client: ${name}`,
     `Phone: ${phone}`,
@@ -99,23 +106,20 @@ async function sendPushNotification({ name, phone, email, service, category, dat
     notes ? `Notes: ${notes}` : null,
   ].filter(Boolean).join('\n');
 
-  try {
-    const r = await fetch(`https://ntfy.sh/${topic}`, {
-      method: 'POST',
-      headers: {
-        'Title': title,
-        'Priority': '4',
-        'Tags': 'sparkles,calendar',
-      },
-      body,
-    });
+  const r = await fetch(`https://ntfy.sh/${topic}`, {
+    method: 'POST',
+    headers: {
+      'Title': title,
+      'Priority': '4',
+      'Tags': 'sparkles,calendar',
+    },
+    body,
+  });
 
-    if (!r.ok) {
-      const err = await r.text();
-      console.error('ntfy.sh notification error:', err);
-    }
-  } catch (err) {
-    console.error('Push notification failed:', err);
+  if (!r.ok) {
+    const err = await r.text();
+    console.error('ntfy.sh notification error:', r.status, err);
+    throw new Error(`ntfy failed: ${r.status}`);
   }
 }
 
