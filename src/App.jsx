@@ -11,6 +11,7 @@ const Services = lazy(() => import('./pages/Services'));
 const Gallery = lazy(() => import('./pages/Gallery'));
 const Testimonials = lazy(() => import('./pages/Testimonials'));
 const Booking = lazy(() => import('./pages/Booking'));
+const Admin = lazy(() => import('./pages/Admin'));
 
 function LoadingFallback() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
               <Route path="/gallery" element={<Gallery />} />
               <Route path="/testimonials" element={<Testimonials />} />
               <Route path="/book" element={<Booking />} />
+              <Route path="/admin" element={<Admin />} />
             </Routes>
           </AnimatePresence>
         </Suspense>

@@ -1,8 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Calendar,
-  Clock,
   User,
   Mail,
   Phone,
@@ -16,6 +14,7 @@ import {
 import PageTransition from '../components/layout/PageTransition';
 import AnimatedSection from '../components/ui/AnimatedSection';
 import SpotlightCard from '../components/ui/SpotlightCard';
+import CalendarPicker from '../components/ui/CalendarPicker';
 import { allServicesFlat } from '../data/services';
 
 const serviceOptions = {
@@ -31,14 +30,6 @@ const serviceOptions = {
   browsLashes: allServicesFlat.filter((s) => s.category === 'browsLashes'),
 };
 
-const timeSlots = [
-  '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM',
-  '11:00 AM', '11:30 AM', '12:00 PM', '12:30 PM',
-  '1:00 PM', '1:30 PM', '2:00 PM', '2:30 PM',
-  '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM',
-  '5:00 PM', '5:30 PM', '6:00 PM', '6:30 PM',
-  '7:00 PM',
-];
 
 function InputField({ icon: Icon, label, error, ...props }) {
   return (
@@ -70,6 +61,14 @@ export default function Booking() {
   });
   const [errors, setErrors] = useState({});
   const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [blockedDates, setBlockedDates] = useState([]);
+
+  useEffect(() => {
+    fetch('/api/availability')
+      .then((res) => res.json())
+      .then((data) => setBlockedDates(data.blockedDates || []))
+      .catch(() => {});
+  }, []);
 
   const update = (field, value) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -255,40 +254,15 @@ export default function Booking() {
                 </AnimatePresence>
 
                 {/* Date & Time */}
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-text-light/60 text-sm mb-2">Preferred Date *</label>
-                    <div className="relative">
-                      <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50" />
-                      <input
-                        type="date"
-                        value={form.date}
-                        onChange={(e) => update('date', e.target.value)}
-                        min={new Date().toISOString().split('T')[0]}
-                        className={`w-full bg-primary/50 border ${errors.date ? 'border-red-500/50' : 'border-gold/20'} rounded-xl pl-11 pr-4 py-3 text-text-light text-sm focus:outline-none focus:border-gold/50 transition-colors`}
-                      />
-                    </div>
-                    {errors.date && <p className="text-red-400 text-xs mt-1">{errors.date}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-text-light/60 text-sm mb-2">Preferred Time *</label>
-                    <div className="relative">
-                      <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gold/50" />
-                      <select
-                        value={form.time}
-                        onChange={(e) => update('time', e.target.value)}
-                        className={`w-full bg-primary/50 border ${errors.time ? 'border-red-500/50' : 'border-gold/20'} rounded-xl pl-11 pr-4 py-3 text-text-light text-sm focus:outline-none focus:border-gold/50 transition-colors appearance-none`}
-                      >
-                        <option value="">Select a time...</option>
-                        {timeSlots.map((slot) => (
-                          <option key={slot} value={slot}>{slot}</option>
-                        ))}
-                      </select>
-                    </div>
-                    {errors.time && <p className="text-red-400 text-xs mt-1">{errors.time}</p>}
-                  </div>
-                </div>
+                <CalendarPicker
+                  selectedDate={form.date}
+                  selectedTime={form.time}
+                  onDateChange={(date) => update('date', date)}
+                  onTimeChange={(time) => update('time', time)}
+                  blockedDates={blockedDates}
+                  dateError={errors.date}
+                  timeError={errors.time}
+                />
 
                 {/* Client Info */}
                 <div className="grid sm:grid-cols-2 gap-4">
