@@ -152,10 +152,10 @@ export default function Footer() {
                 </div>
                 <p className="text-text-light/40 text-xs mt-2">Instagram</p>
               </a>
-              <a href="https://snapchat.com/add/ravellebeauty" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
+              <a href="https://snapchat.com/t/dmuOE4Id" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
                 <div className="bg-white p-2 rounded-lg inline-block">
                   <QRCodeSVG
-                    value="https://snapchat.com/add/ravellebeauty"
+                    value="https://snapchat.com/t/dmuOE4Id"
                     size={72}
                     fgColor="#0A0A0A"
                     bgColor="#FFFFFF"
