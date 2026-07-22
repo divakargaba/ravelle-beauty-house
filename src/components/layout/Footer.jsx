@@ -141,7 +141,7 @@ export default function Footer() {
           <div>
             <h4 className="font-heading text-gold text-lg mb-4">Connect</h4>
             <div className="grid grid-cols-2 gap-4">
-              <div className="text-center">
+              <a href="https://instagram.com/ravellebeautyhouse" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
                 <div className="bg-white p-2 rounded-lg inline-block">
                   <QRCodeSVG
                     value="https://instagram.com/ravellebeautyhouse"
@@ -151,8 +151,8 @@ export default function Footer() {
                   />
                 </div>
                 <p className="text-text-light/40 text-xs mt-2">Instagram</p>
-              </div>
-              <div className="text-center">
+              </a>
+              <a href="https://snapchat.com/add/ravellebeauty" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
                 <div className="bg-white p-2 rounded-lg inline-block">
                   <QRCodeSVG
                     value="https://snapchat.com/add/ravellebeauty"
@@ -162,8 +162,8 @@ export default function Footer() {
                   />
                 </div>
                 <p className="text-text-light/40 text-xs mt-2">Snapchat</p>
-              </div>
-              <div className="text-center">
+              </a>
+              <a href="https://www.tiktok.com/@gypsysoul_gemini" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
                 <div className="bg-white p-2 rounded-lg inline-block">
                   <QRCodeSVG
                     value="https://www.tiktok.com/@gypsysoul_gemini"
@@ -173,8 +173,8 @@ export default function Footer() {
                   />
                 </div>
                 <p className="text-text-light/40 text-xs mt-2">TikTok</p>
-              </div>
-              <div className="text-center">
+              </a>
+              <a href="https://wa.me/18257363649" target="_blank" rel="noopener noreferrer" className="text-center hover:opacity-80 transition-opacity">
                 <div className="bg-white p-2 rounded-lg inline-block">
                   <QRCodeSVG
                     value="https://wa.me/18257363649"
@@ -184,7 +184,7 @@ export default function Footer() {
                   />
                 </div>
                 <p className="text-text-light/40 text-xs mt-2">WhatsApp</p>
-              </div>
+              </a>
             </div>
           </div>
         </div>
